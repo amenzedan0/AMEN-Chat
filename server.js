@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const path = require("path");
 const { Server } = require("socket.io");
+require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
@@ -9,197 +10,122 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
-// ===============================
-// WEBSITE FILES
-// ===============================
-
 app.use(express.static(path.join(__dirname, "public")));
-
-app.use(
-    "/admin",
-    express.static(path.join(__dirname, "admin"))
-);
-
-// ===============================
-// HOME
-// ===============================
+app.use("/admin", express.static(path.join(__dirname, "admin")));
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
-// ===============================
-// ADMIN
-// ===============================
 
 app.get("/admin", (req, res) => {
-    res.sendFile(path.join(__dirname, "admin", "index.html"));
+  res.sendFile(path.join(__dirname, "admin", "index.html"));
 });
-
-// ===============================
-// USERS
-// ===============================
 
 const users = new Map();
 
-// ===============================
-// SOCKET.IO
-// ===============================
-
 io.on("connection", (socket) => {
+  console.log("🟢 User connected:", socket.id);
 
-    console.log("🟢 Connected:", socket.id);
+  socket.on("join", (name) => {
+    const userName =
+      typeof name === "string" && name.trim()
+        ? name.trim()
+        : "Guest";
 
-    // ---------------------------
-    // USER JOIN
-    // ---------------------------
-
-    socket.on("join", (name) => {
-
-        const userName =
-            name && name.trim()
-                ? name.trim()
-                : "Guest";
-
-        users.set(socket.id, {
-            id: socket.id,
-            name: userName
-        });
-
-        console.log("👤 User:", userName);
-
-        socket.emit("joined", {
-            message: "بەخێربێیت بۆ AMEN CHAT 🤖"
-        });
-
-        io.to("admin").emit("newUser", {
-            id: socket.id,
-            name: userName
-        });
+    users.set(socket.id, {
+      id: socket.id,
+      name: userName
     });
 
-    // ---------------------------
-    // ADMIN LOGIN
-    // ---------------------------
-
-    socket.on("admin-login", (password) => {
-
-        if (password === "amen123") {
-
-            socket.join("admin");
-
-            socket.emit("admin-success", {
-                message: "بەخێرهاتی بۆ AMEN ADMIN 👑"
-            });
-
-            // Send existing users
-            users.forEach((user) => {
-
-                socket.emit("newUser", {
-                    id: user.id,
-                    name: user.name
-                });
-
-            });
-
-            console.log("👑 Admin connected");
-
-        } else {
-
-            socket.emit("admin-error", {
-                message: "وشەی نهێنی هەڵەیە ❌"
-            });
-        }
+    socket.emit("joined", {
+      message: "بەخێربێیت بۆ AMEN CHAT 🤖"
     });
 
-    // ---------------------------
-    // USER MESSAGE
-    // ---------------------------
-
-    socket.on("user-message", (data) => {
-
-        const user = users.get(socket.id);
-
-        if (!user) return;
-
-        const message =
-            typeof data?.message === "string"
-                ? data.message.trim()
-                : "";
-
-        if (!message) return;
-
-        console.log(
-            `📩 ${user.name}: ${message}`
-        );
-
-        io.to("admin").emit("user-message", {
-            userId: user.id,
-            userName: user.name,
-            message: message
-        });
+    io.to("admin").emit("newUser", {
+      id: socket.id,
+      name: userName
     });
 
-    // ---------------------------
-    // ADMIN REPLY
-    // ---------------------------
+    console.log("👤 User:", userName);
+  });
 
-    socket.on("admin-reply", (data) => {
+  socket.on("admin-login", (password) => {
+    if (password === process.env.ADMIN_PASSWORD) {
+      socket.join("admin");
 
-        if (!data?.userId) return;
+      socket.emit("admin-success", {
+        message: "بەخێرهاتی بۆ AMEN ADMIN 👑"
+      });
 
-        const message =
-            typeof data.message === "string"
-                ? data.message.trim()
-                : "";
+      users.forEach((user) => {
+        socket.emit("newUser", user);
+      });
 
-        if (!message) return;
+      console.log("👑 Admin connected");
+    } else {
+      socket.emit("admin-error", {
+        message: "وشەی نهێنی هەڵەیە ❌"
+      });
+    }
+  });
 
-        console.log(
-            `📤 Admin → ${data.userId}: ${message}`
-        );
+  socket.on("user-message", (data) => {
+    const user = users.get(socket.id);
+    if (!user) return;
 
-        io.to(data.userId).emit("admin-message", {
-            message: message
-        });
+    const message =
+      typeof data?.message === "string"
+        ? data.message.trim()
+        : "";
+
+    if (!message) return;
+
+    io.to("admin").emit("user-message", {
+      userId: user.id,
+      userName: user.name,
+      message
     });
 
-    // ---------------------------
-    // DISCONNECT
-    // ---------------------------
+    console.log(`📩 ${user.name}: ${message}`);
+  });
 
-    socket.on("disconnect", () => {
+  socket.on("admin-reply", (data) => {
+    if (!data?.userId) return;
 
-        const user = users.get(socket.id);
+    const message =
+      typeof data.message === "string"
+        ? data.message.trim()
+        : "";
 
-        if (user) {
+    if (!message) return;
 
-            console.log(
-                `🔴 Disconnected: ${user.name}`
-            );
-
-            io.to("admin").emit("userOffline", {
-                id: socket.id
-            });
-
-            users.delete(socket.id);
-        }
-
+    io.to(data.userId).emit("admin-message", {
+      message
     });
 
+    console.log(`📤 Admin → ${data.userId}: ${message}`);
+  });
+
+  socket.on("disconnect", () => {
+    const user = users.get(socket.id);
+
+    if (user) {
+      console.log(`🔴 Disconnected: ${user.name}`);
+
+      io.to("admin").emit("userOffline", {
+        id: socket.id
+      });
+
+      users.delete(socket.id);
+    }
+  });
 });
 
-// ===============================
-// SERVER
-// ===============================
-
 server.listen(PORT, "0.0.0.0", () => {
-
-    console.log("");
-    console.log("🤖 ===========================");
-    console.log("🚀 AMEN CHAT ONLINE");
-    console.log(`🌐 PORT: ${PORT}`);
-    console.log("🤖 ===========================");
-    console.log("");
-
+  console.log("");
+  console.log("🤖 ==========================");
+  console.log("🚀 AMEN CHAT ONLINE");
+  console.log(`🌐 PORT: ${PORT}`);
+  console.log("🤖 ==========================");
+  console.log("");
 });
