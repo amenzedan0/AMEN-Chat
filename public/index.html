@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMEN CHAT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <header>
+        <div class="logo">A</div>
+
+        <div>
+            <h1>AMEN CHAT</h1>
+            <p>Online Support 🤖</p>
+        </div>
+
+        <span class="online"></span>
+    </header>
+
+    <div id="messages" class="messages">
+
+        <div class="welcome">
+            <div class="robot">🤖</div>
+            <h2>بەخێربێیت بۆ AMEN CHAT</h2>
+            <p>پەیامەکەت بنووسە، تیمی AMEN وەڵامت دەداتەوە.</p>
+        </div>
+
+    </div>
+
+    <div class="typing" id="typing">
+        AMEN چاوەڕێی پەیامەکەتە...
+    </div>
+
+    <form id="chatForm">
+
+        <input
+            id="messageInput"
+            type="text"
+            placeholder="پەیامەکەت بنووسە..."
+            autocomplete="off"
+        >
+
+        <button type="submit">➤</button>
+
+    </form>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "amen-chat",
+  "version": "1.0.0",
+  "description": "AMEN Real Time Chat",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.1"
+  }
+}

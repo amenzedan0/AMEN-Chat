@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AMEN ADMIN</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="loginBox" class="login-box">
+
+        <div class="logo">A</div>
+
+        <h1>AMEN ADMIN</h1>
+
+        <p>چوونەژوورەوە بۆ پانێڵی بەڕێوەبەر</p>
+
+        <input
+            id="password"
+            type="password"
+            placeholder="وشەی نهێنی"
+        >
+
+        <button id="loginButton">
+            چوونەژوورەوە
+        </button>
+
+        <div id="loginError"></div>
+
+    </div>
+
+
+    <div id="adminPanel" class="admin-panel hidden">
+
+        <header>
+
+            <div class="logo">A</div>
+
+            <div>
+                <h1>AMEN ADMIN</h1>
+                <p>پانێڵی پەیامەکان</p>
+            </div>
+
+            <span class="online"></span>
+
+        </header>
+
+
+        <main>
+
+            <aside>
+
+                <h2>👥 بەکارهێنەران</h2>
+
+                <div id="users">
+                    <p class="empty">
+                        هێشتا هیچ بەکارهێنەرێک نییە
+                    </p>
+                </div>
+
+            </aside>
+
+
+            <section class="chat-area">
+
+                <div class="chat-header">
+
+                    <div>
+                        <h2 id="selectedUser">
+                            هیچ بەکارهێنەرێک هەڵنەبژێردراوە
+                        </h2>
+
+                        <p id="userStatus">
+                            چاوەڕێی پەیام...
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div id="messages" class="messages">
+
+                    <div class="empty-chat">
+                        <div>🤖</div>
+                        <h2>AMEN ADMIN</h2>
+                        <p>
+                            بەکارهێنەرێک هەڵبژێرە بۆ بینینی پەیامەکان.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <form id="replyForm">
+
+                    <input
+                        id="replyInput"
+                        type="text"
+                        placeholder="وەڵامەکەت بنووسە..."
+                        autocomplete="off"
+                        disabled
+                    >
+
+                    <button
+                        id="replyButton"
+                        type="submit"
+                        disabled
+                    >
+                        ➤
+                    </button>
+
+                </form>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+
+</body>
+
+</html>
