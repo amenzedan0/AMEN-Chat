@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AMEN iT - IQ Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="background">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="stars"></div>
+</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" class="screen">
+    <div class="login-box">
+        <div class="mini-logo">AMEN iT</div>
+
+        <h1>🧠 IQ CHALLENGE</h1>
+        <p>خۆت تاقی بکەرەوە و تا مەرحەلەی 1000 بڕۆ!</p>
+
+        <input
+            id="emailInput"
+            type="email"
+            placeholder="ئیمەیڵەکەت بنووسە"
+        >
+
+        <button onclick="login()" class="main-btn">
+            دەستپێکردن 🚀
+        </button>
+    </div>
+</div>
+
+<!-- GAME -->
+<div id="gameScreen" class="hidden">
+
+    <header>
+        <div class="brand">AMEN iT</div>
+
+        <div class="top-info">
+            <span>🪙 <b id="coins">0</b></span>
+            <button onclick="openSettings()">⚙️</button>
+        </div>
+    </header>
+
+    <main>
+
+        <section id="levelsSection">
+
+            <div class="profile">
+                <div>
+                    <small id="playerEmail"></small>
+                    <h2>ئاستەکان</h2>
+                </div>
+
+                <div class="progress-box">
+                    <span id="progressText">0 / 1000</span>
+                    <div class="progress">
+                        <div id="progressBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="levels" class="levels"></div>
+
+        </section>
+
+
+        <section id="quizSection" class="hidden">
+
+            <div class="quiz-top">
+                <button onclick="backToLevels()">←</button>
+
+                <span>
+                    مەرحەلە <b id="currentLevel">1</b>
+                </span>
+
+                <span>
+                    🪙 <b id="quizCoins">0</b>
+                </span>
+            </div>
+
+            <div class="question-card">
+
+                <div class="question-number">
+                    پرسیاری <span id="questionNumber">1</span> / 10
+                </div>
+
+                <h2 id="question"></h2>
+
+                <div id="answers" class="answers"></div>
+
+                <button
+                    id="helpButton"
+                    onclick="removeAnswers()"
+                    class="help-btn"
+                >
+                    🔓 کردنەوەی هەڵبژاردە
+                    <span>50 🪙</span>
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+
+<!-- SETTINGS -->
+<div id="settings" class="modal hidden">
+
+    <div class="settings-box">
+
+        <button class="close" onclick="closeSettings()">×</button>
+
+        <h2>⚙️ Settings</h2>
+
+        <label>
+            🔊 دەنگ
+            <input
+                id="soundToggle"
+                type="checkbox"
+                checked
+                onchange="changeSound()"
+            >
+        </label>
+
+        <label>
+            🔉 قەبارەی دەنگ
+            <input
+                id="volume"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.5"
+                onchange="changeVolume()"
+            >
+        </label>
+
+        <button onclick="logout()" class="logout">
+            دەرچوون
+        </button>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
